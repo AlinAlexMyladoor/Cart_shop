@@ -1,0 +1,63 @@
+{% include 'header.html' %}
+<style>
+  .order-review-wrapper {
+    background-color: #f8f9fa; /* Light gray background */
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+<div class="container mt-4 order-review-wrapper">
+  <h2>Review Your Order</h2>
+  <form method="post" action="{% url 'confirm_buy_all' %}">
+    {% csrf_token %}
+
+    <div class="row">
+      <!-- LEFT: Product Summary -->
+      <div class="col-md-7">
+        {% for item in cart_items %}
+          <div class="border rounded p-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h5>{{ item.product.name }}</h5>
+                
+                <p>Total: ₹{{ item.subtotal }}</p>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="collapse" data-bs-target="#details{{ item.product.id }}" aria-expanded="false" aria-controls="details{{ item.product.id }}">
+                Show Details
+              </button>
+            </div>
+
+            <!-- Collapsible Details -->
+            <div class="collapse mt-3" id="details{{ item.product.id }}">
+              <div class="row">
+                <div class="col-md-5">
+                  <img src="{{ item.product.image.url }}" class="img-fluid rounded" alt="{{ item.product.name }}">
+                </div>
+                <div class="col-md-7">
+                  <p><strong>Category:</strong> {{ item.product.category }}</p>
+
+                  <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+
+                  <p>Price: ₹{{ item.product.price }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- RIGHT: Address and Total -->
+      <div class="col-md-5">
+        <div class="border rounded p-3 mb-4">
+          <h5>Delivery Address</h5>
+          <textarea name="address" id="address" class="form-control" rows="6" required></textarea>
+        </div>
+
+        <h5>Total: ₹{{ total }}</h5>
+        <button type="submit" class="btn btn-primary w-100">Confirm Purchase</button>
+      </div>
+    </div>
+  </form>
+</div>

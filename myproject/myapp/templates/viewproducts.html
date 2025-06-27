@@ -1,0 +1,108 @@
+{% include 'header.html' %}
+{% load static %}
+
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      <form method="get" class="row g-3 p-4 rounded shadow-sm bg-light border mb-5">
+        <div class="col-md-5">
+          <label class="form-label fw-bold text-primary">Category</label>
+          <select name="category" class="form-select">
+            <option value="all">All Categories</option>
+            {% for cat in categories %}
+              <option value="{{ cat.name }}" {% if selected_category == cat.name %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-bold text-primary">Max Price</label>
+          <input type="number" class="form-control" name="max_price" value="{{ max_price }}">
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+          <button type="submit" class="btn btn-primary w-100 fw-semibold"> Filter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="container mt-4">
+  <div class="row">
+    {% if products %}
+      {% for product in products %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text"><strong>Category:</strong> {{ product.category }}</p>
+              <p class="card-text"><strong>Price:</strong> ₹{{ product.price }}</p>
+
+              {% if product.id not in cart_product_ids %}
+                <form method="post" action="{% url 'add_to_cart' product.id %}" style="display:inline-block; margin-left:50px;">
+                  {% csrf_token %}
+                  <button type="submit">Add to Cart</button>
+                </form>
+              {% else %}
+                <p style="color: green;"><strong>Added to Cart</strong></p>
+              {% endif %}
+
+              <form method="get" action="{% url 'buy_product' product.id %}" style="display:inline-block; margin-left:90px;">
+                <button type="submit">Buy Now</button>
+              </form>
+         
+{% if product.reviews %}
+  <div class="d-flex justify-content-center mt-2">
+    <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#feedbackModal{{ product.id }}">
+      View Feedback
+    </button>
+  </div>
+
+ 
+  <div class="modal fade" id="feedbackModal{{ product.id }}" tabindex="-1" aria-labelledby="feedbackModalLabel{{ product.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="feedbackModalLabel{{ product.id }}">Feedback for {{ product.name }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+         {% for review in product.reviews %}
+  <p class="mb-1"><strong>{{ review.user.username }}</strong></p>
+  <p style="margin-bottom: 3px;">
+    {% for i in "12345" %}
+      {% if forloop.counter <= review.rating %}
+        <span style="color: gold;">★</span>
+      {% else %}
+        <span style="color: #ccc;">★</span>
+      {% endif %}
+    {% endfor %}
+  </p>
+  <p class="fst-italic text-muted">“{{ review.feedback }}”</p>
+
+
+    <hr>
+  {% endfor %}
+</div>
+
+
+ 
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>No products available.</p>
+    {% endif %}
+  </div>
+</div>

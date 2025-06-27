@@ -1,0 +1,57 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container mt-4">
+  <h2 class="mb-4">Buy <strong> {{ product.name }} </strong></h2>
+
+  <div class="row">
+    <div class="col-md-6">
+      <img src="{{ product.image.url }}" class="img-fluid rounded shadow" alt="{{ product.name }}">
+    </div>
+    <div class="col-md-6">
+      <ul class="list-group list-group-flush mb-4">
+        <li class="list-group-item"><strong>Product Name:</strong> {{ product.name }}</li>
+        <li class="list-group-item"><strong>Category:</strong> {{ product.category }}</li>
+        <li class="list-group-item"><strong>Price:</strong> ₹{{ product.price }}</li>
+        <li class="list-group-item">
+  <strong>Total:</strong> ₹<span id="total">{{ product.subtotal }}</span>
+</li>
+      </ul>
+
+      <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+          <label for="quantity" class="form-label"><strong>Quantity:</strong></label>
+          <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="address" class="form-label"><strong>Delivery Address:</strong></label>
+          <textarea class="form-control" id="address" name="address" rows="4" placeholder="Enter your full address" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Proceed </button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  const price = parseFloat("{{ product.price }}");
+  const quantityInput = document.getElementById("quantity");
+  const totalElement = document.getElementById("total");
+
+  function updateTotal() {
+    const quantity = parseInt(quantityInput.value) || 1;
+    const total = price * quantity;
+    totalElement.textContent = total.toFixed(2);
+  }
+
+  quantityInput.addEventListener("input", updateTotal);
+  document.addEventListener("DOMContentLoaded", updateTotal);
+</script>
+</body>
+</html>
+
+
+

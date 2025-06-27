@@ -1,0 +1,128 @@
+{% include 'header.html' %}
+<style>
+ 
+
+
+
+.card-img-top {
+  object-fit: cover;
+  height: 200px;
+  border-bottom: 1px solid #ddd;
+}
+
+
+h2.text-center {
+  font-weight: 600;
+  color: #333;
+}
+
+.card-body p {
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+
+.btn-outline-primary.btn-sm {
+  padding: 4px 10px;
+  font-size: 0.85rem;
+}
+
+.card.border-left-primary {
+  border-left: 4px solid #4e73df !important;
+}
+.card.border-left-danger {
+  border-left: 4px solid #e74a3b !important;
+}
+
+
+.card-body span {
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .col-md-4 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+</style>
+<div class="container mt-4">
+ <h2 class="mb-4 text-center">All Bookings</h2>
+
+  <div class="row text-center mb-4">
+    <div class="col-md-6">
+      <div class="card border-left-primary shadow py-3">
+        <div class="card-body">
+          <h5 class="text-primary">Pending Orders</h5>
+<h4>{{ pending_count }}</h4>
+
+
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card border-left-danger shadow py-3">
+        <div class="card-body">
+          <h5 class="text-danger">Cancelled Orders</h5>
+<h4>{{ cancelled_count }}</h4>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if orders %}
+    <div class="row">
+      {% for order in orders %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+            <img src="{{ order.product.image.url }}" class="card-img-top" alt="{{ order.product.name }}">
+
+           
+           {% if order.status != "Cancelled" and order.status != "Delivered" %}
+            <div class="text-center mt-2">
+              <form method="get" action="{% url 'update_order_status' order.id %}">
+                <button class="btn btn-outline-primary btn-sm">Update Status</button>
+              </form>
+            </div>
+            {% endif %}
+
+       
+
+            <div class="card-body">
+              <h5 class="card-title">{{ order.product.name }}</h5>
+              <p><strong>User:</strong> {{ order.user.username }}</p>
+              <p><strong>Email:</strong> {{ order.user.email }}</p>
+              <p><strong>Category:</strong> {{ order.product.category }}</p>
+              <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+              <p><strong>Price:</strong> ₹{{ order.product.price }}</p>
+              <p><strong>Total:</strong> ₹{{ order.product.price|floatformat:2|add:"0"|floatformat:"0"|add:order.quantity|floatformat:2 }}</p>
+              <p><strong>Address:</strong> {{ order.address }}</p>
+              <p class="text-muted"><small>Ordered on {{ order.ordered_at|date:"d M Y, h:i A" }}</small></p>
+              <p><strong>Status:</strong> {{ order.status }}</p>
+
+              {% if order.rating %}
+                <p><strong>User Rating:</strong>
+                  {% for i in "12345" %}
+                    {% if forloop.counter <= order.rating %}
+                      <span style="color: gold;">★</span>
+                    {% else %}
+                      <span style="color: #ccc;">★</span>
+                    {% endif %}
+                  {% endfor %}
+                </p>
+                {% if order.feedback %}
+                  <p><strong>Feedback:</strong> "{{ order.feedback }}"</p>
+                {% endif %}
+              {% elif order.status == "Delivered" %}
+                <p class="text-muted"><em>Waiting for user feedback...</em></p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No bookings found.</p>
+  {% endif %}
+</div>

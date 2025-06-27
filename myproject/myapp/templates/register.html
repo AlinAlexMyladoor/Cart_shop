@@ -1,0 +1,73 @@
+
+{% load static %}
+{% include 'header.html' %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+
+
+<h1 id="a3"><b>Enter details</b></h1>
+
+<style>
+ 
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 120vh;
+    margin: 0;
+    background-color: #f0f2f5; 
+    font-family: Arial, sans-serif;
+}
+
+form {
+    background-color: #ffffff; 
+    padding: 50px 50px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    height:auto;
+}
+
+
+
+
+input[type="submit"] {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+#a3{
+    
+    position: relative;
+    left: 260px;
+    bottom: 370px;
+}
+</style>
+<form method="post">
+    {% csrf_token %}
+    <fieldset >
+    {% comment %} <label for="first-name">First-Name</label>
+    <input type="text" name="first-name" placeholder="First-Name" required/>
+    <label for="last-name">Last-Name</label>
+    <input type="text" name="last-name" placeholder="Last-Name" required/>
+     <label for="number">Phone Number</label>
+     <input type="number" name="number" placeholder="PH.NO"  maxlength="10" />
+     <label for="email">Email</label>
+     <input type="email" name="email" placeholder="Email" required/> {% endcomment %}
+
+     {{ form }}
+     <input type="submit" value="Submit" />
+
+    </fieldset> 
+</form>
+    </body>
+    </html>

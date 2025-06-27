@@ -1,0 +1,105 @@
+{% include 'header.html' %}
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+table {
+    width: 90%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+th, td {
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+th {
+    background-color:rgb(67, 103, 180);
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+button {
+    padding: 6px 12px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+a {
+    text-decoration: none;
+}
+</style>
+
+
+<h1>View Users</h1>
+<table border="1">
+
+    <tr>
+        <th>First Name</th>
+         <th>Last Name</th>
+          <th>Email</th>
+          <th>Username</th>
+           <th>contact</th>
+    </tr>
+    {% for i in user %}
+    <tr id="user-{{ i.id }}">
+        <td>{{ i.first_name }}</td>
+        <td>{{ i.last_name}}</td>
+        <td>{{ i.email }}</td>
+        <td>{{  i.username }}</td>
+        <td>{{ i.contact }}</td>
+         <td>
+  <a href="mailto:{{ i.email }}">
+    <button type="button">Send Email</button>
+  </a>
+</td>
+         <td>
+          <a href="/{{ i.email }}">
+                Click to view email
+            </td>
+            <td>
+      <a href="/delete/{{ i.id}}">Delete</a>
+
+        </td>
+
+      <td>
+      <a href="/edit/{{ i.id}}">Edit</a>
+
+        </td>
+    </tr>
+    {% endfor %}
+   
+    
+</table>
+
+
+
+
+ </body>
+    </html>

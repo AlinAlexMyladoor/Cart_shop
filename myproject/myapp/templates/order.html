@@ -1,0 +1,99 @@
+
+{% load static %}
+{% include 'header.html' %}
+<style>
+  .star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    font-size: 1.8rem;
+  }
+
+  .star-rating input[type="radio"] {
+    display: none;
+  }
+
+  .star-rating label {
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+  }
+
+  .star-rating input[type="radio"]:checked ~ label,
+  .star-rating label:hover,
+  .star-rating label:hover ~ label {
+    color: gold;
+  }
+</style>
+
+<div class="container mt-4">
+  <h2>Your Orders</h2>
+
+  {% if orders %}
+    <div class="row">
+      {% for order in orders %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+            <img src="{{ order.product.image.url }}" class="card-img-top" alt="{{ order.product.name }}">
+            <div class="card-body">
+              <h5 class="card-title">{{ order.product.name }}</h5>
+              <p><strong>Category:</strong> {{ order.product.category }}</p>
+              <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+              <p><strong>Price:</strong> ₹{{ order.product.price }}</p>
+              <p><strong>Total:</strong> ₹{{ order.total_price }}</p>
+              <p><strong>Address:</strong> {{ order.address }}</p>
+              <p><strong>Status:</strong> {{ order.status }}</p>
+              <p class="text-muted"><small>Ordered on {{ order.ordered_at|date:"d M Y, h:i A" }}</small></p>
+              {% if order.status != 'Cancelled' and order.status != 'Delivered' %}
+  <form method="post" action="{% url 'cancel_order' order.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
+  </form>
+{% elif order.status == 'Cancelled' %}
+  <p class="text-danger"><strong>Status:</strong> Cancelled</p>
+{% elif order.status == 'Delivered' %}
+  <p class="text-success"><strong>Status:</strong> Delivered</p>
+{% endif %} 
+{% if order.status == "Delivered" and not order.feedback %}
+ <form method="post" action="{% url 'submit_feedback' order.id %}">
+  {% csrf_token %}
+ <div class="mb-3">
+  <label><strong>Rate Your Experience:</strong></label><br>
+  <div class="star-rating">
+    {% for i in "12345" %}
+      <input type="radio" name="rating" id="star{{ i }}" value="{{ i }}">
+      <label for="star{{ i }}" title="{{ i }} stars">★</label>
+    {% endfor %}
+  </div>
+</div>
+
+  </div>
+    <div class="mb-3">
+      <label for="feedback">Write Feedback:</label>
+      <textarea name="feedback" class="form-control" rows="3" required></textarea>
+    </div>
+    <button class="btn btn-primary btn-sm" type="submit">Submit Feedback</button>
+  </form>
+{% elif order.feedback %}
+  <p><strong>Your Rating:</strong>
+  {% for i in "12345" %}
+    {% if forloop.counter <= order.rating %}
+      <span style="color: gold;">★</span>
+    {% else %}
+      <span style="color: #ccc;">★</span>
+    {% endif %}
+  {% endfor %}
+</p>
+
+  <p><strong>Your Feedback:</strong> {{ order.feedback }}</p>
+{% endif %}
+
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>You haven’t placed any orders yet.</p>
+  {% endif %}
+</div>

@@ -1,0 +1,86 @@
+{% load static %}
+{% include 'header.html' %}
+
+<style>
+  .cart-section {
+    margin: 20px auto;
+    max-width: 800px;
+  }
+
+  .cart-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .cart-total {
+    color: #ff6600;
+    font-weight: bold;
+  }
+
+  .cart-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background: #f5f5f5;
+    border-left: 5px solid #28a745;
+    border-radius: 6px;
+  }
+
+  .cart-item img {
+    width: 120px;
+    height: auto;
+    border-radius: 4px;
+  }
+
+  .cart-details {
+    flex: 1;
+  }
+
+  .cart-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cart-buttons form {
+    margin: 0;
+  }
+</style>
+
+<div class="cart-section">
+  <div class="cart-header">
+    <h2>🛒 Cart Items</h2>
+    <h4 class="cart-total">Total: ₹{{ total }}</h4>
+    <form method="get" action="{% url 'buy_all_view' %}">
+      <button type="submit" class="btn btn-success btn-lg">Buy All</button>
+    </form>
+  </div>
+
+ {% for item in cart_items %}
+  <div class="cart-item">
+    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+    <div class="cart-details">
+      <h5>{{ item.product.name }}</h5>
+    <form method="post" action="{% url 'update_cart_quantity' item.product.id %}">
+      {% csrf_token %}
+      <label>Quantity</label>
+       <input type="number" name="quantity" value="{{ item.quantity }}" min="1" style="width: 60px;">
+       <button type="submit" class="btn btn-sm btn-primary">Update</button>
+    </form>
+
+      <p>Price: ₹{{ item.product.price }}</p>
+      <p>Total: ₹{{ item.subtotal }}</p>
+    </div>
+
+    <div class="cart-buttons">
+      <form action="{% url 'remove_from_cart' item.product.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+      </form>
+
+      
+    </div>
+  </div>
+{% endfor %}
